@@ -5,9 +5,11 @@ import com.dto.ProductDTO;
 import com.mapper.ProductMapper;
 import com.service.product.ProductServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -28,11 +30,11 @@ public class ProductDBController {
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public String createProduct(@RequestBody ProductDTO request) {
+    public ResponseEntity<String> createProduct(@Valid @RequestBody ProductDTO request) {
 
         serviceRepository.saveNewProduct(request);
 
-        return "Product saved";
+        return ResponseEntity.ok("Product saved");
     }
 
     @GetMapping(value = "/{creditsIds}", produces = APPLICATION_JSON_VALUE)

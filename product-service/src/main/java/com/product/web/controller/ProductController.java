@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -24,7 +25,7 @@ public class ProductController {
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> createProduct(@RequestBody ProductDTO request) throws JsonProcessingException {
+    public ResponseEntity<ApiResponse> createProduct(@Valid @RequestBody ProductDTO request) throws JsonProcessingException {
 
         ApiResponse response = productService.createProduct(request);
 

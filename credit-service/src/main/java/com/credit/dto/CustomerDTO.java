@@ -1,9 +1,16 @@
 package com.credit.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class CustomerDTO {
+    @NotBlank
     private String firstName;
+    @NotBlank
     private String surname;
+    @NotBlank
     private String pesel;
+    @NotNull
     private Integer creditId;
 
     public CustomerDTO() {

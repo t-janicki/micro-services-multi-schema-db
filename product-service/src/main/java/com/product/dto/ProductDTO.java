@@ -1,8 +1,14 @@
 package com.product.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class ProductDTO {
+    @NotBlank
     private String productName;
+    @NotNull
     private Integer value;
+    @NotNull
     private Integer creditId;
 
     public ProductDTO() {
@@ -26,12 +32,4 @@ public class ProductDTO {
         return creditId;
     }
 
-    @Override
-    public String toString() {
-        return "ProductDTO{" +
-                "productName='" + productName + '\'' +
-                ", value=" + value +
-                ", creditId=" + creditId +
-                '}';
-    }
 }

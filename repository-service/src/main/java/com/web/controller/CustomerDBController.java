@@ -5,9 +5,11 @@ import com.dto.CustomerDTO;
 import com.mapper.CustomerMapper;
 import com.service.customer.CustomerServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -28,11 +30,11 @@ public class CustomerDBController {
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public String createCustomer(@RequestBody CustomerDTO request) {
+    public ResponseEntity<String> createCustomer(@Valid @RequestBody CustomerDTO request) {
 
         serviceRepository.saveNewCustomer(request);
 
-        return "Customer saved";
+        return ResponseEntity.ok("Customer saved");
     }
 
     @GetMapping(value = "/{creditsIds}", produces = APPLICATION_JSON_VALUE)

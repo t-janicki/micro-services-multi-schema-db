@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -25,7 +26,7 @@ public class CreditController {
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<CreditIdResponse> createCredit(@RequestBody CreditRequest request) throws JsonProcessingException {
+    public ResponseEntity<CreditIdResponse> createCredit(@Valid @RequestBody CreditRequest request) throws JsonProcessingException {
 
         int creditId = facade.createCredit(request);
 

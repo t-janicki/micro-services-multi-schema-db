@@ -1,6 +1,5 @@
 package com.config;
 
-import com.domain.product.Product;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;

@@ -5,9 +5,11 @@ import com.dto.CreditDTO;
 import com.mapper.CreditMapper;
 import com.service.credit.CreditServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -28,9 +30,9 @@ public class CreditDBController {
     }
 
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
-    public String createCredit(@RequestBody CreditDTO creditDTO) {
+    public ResponseEntity<String> createCredit(@NotNull @RequestBody CreditDTO creditDTO) {
         creditServiceRepository.saveNewCredit(creditDTO);
-        return "Credit saved";
+        return ResponseEntity.ok("Credit saved");
     }
 
     @GetMapping(produces = APPLICATION_JSON_VALUE)
