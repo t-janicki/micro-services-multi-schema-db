@@ -20,6 +20,16 @@ public class CreditRequest {
     public CreditRequest() {
     }
 
+    public CreditRequest(String firstName, String surname, String pesel,
+                         String productName, Integer productValue, String creditName) {
+        this.firstName = firstName;
+        this.surname = surname;
+        this.pesel = pesel;
+        this.productName = productName;
+        this.productValue = productValue;
+        this.creditName = creditName;
+    }
+
     public String getFirstName() {
         return firstName;
     }

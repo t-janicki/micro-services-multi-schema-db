@@ -14,11 +14,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class CreditServiceImpl implements CreditService {
+
+    @Override
+    public int generateCreditId() {
+        return Math.abs(new SecureRandom().nextInt());
+    }
 
     @Override
     public ApiResponse saveNewCredit(String creditName, Integer creditId) throws JsonProcessingException {

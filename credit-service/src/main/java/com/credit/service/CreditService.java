@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface CreditService {
 
+    int generateCreditId();
+
     ApiResponse saveNewCredit(String creditName, Integer creditId) throws JsonProcessingException;
 
     List<CreditDTO> getCredits();
