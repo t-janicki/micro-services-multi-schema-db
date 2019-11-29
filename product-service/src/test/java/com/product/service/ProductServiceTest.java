@@ -33,7 +33,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void shouldCreateNewProduct() {
+    public void shouldFetchCreateNewProduct() {
         //GIVEN
         ProductDTO productDTO = new ProductDTO("Product name", 2000, 3123123);
 

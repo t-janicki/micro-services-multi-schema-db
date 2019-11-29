@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @Component
 public class ProductMapper {
 
-    private ProductDTO mapToProductDTO(Product product) {
+    public ProductDTO mapToProductDTO(Product product) {
         return new ProductDTO(
                 product.getProductName(),
                 product.getValue(),
