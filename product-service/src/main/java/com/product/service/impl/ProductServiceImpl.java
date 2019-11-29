@@ -1,59 +1,47 @@
 package com.product.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.product.domain.Product;
 import com.product.dto.ProductDTO;
+import com.product.repository.ProductRepository;
 import com.product.service.ProductService;
 import com.product.web.response.ApiResponse;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
+@Transactional
 public class ProductServiceImpl implements ProductService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductServiceImpl.class);
+    private ProductRepository productRepository;
+
+    @Autowired
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
     @Override
-    public ApiResponse createProduct(ProductDTO request) throws JsonProcessingException {
+    public ApiResponse saveNewProduct(ProductDTO productDTO) {
 
-        Map<String, String> productInfo = new HashMap<>();
-        productInfo.put("productName", request.getProductName());
-        productInfo.put("value", Integer.toString(request.getValue()));
-        productInfo.put("creditId", Integer.toString(request.getCreditId()));
+        Product product = new Product();
+        product.setProductName(productDTO.getProductName());
+        product.setValue(productDTO.getValue());
+        product.setCreditId(productDTO.getCreditId());
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        productRepository.save(product);
 
-        String json = new ObjectMapper().writeValueAsString(productInfo);
-        HttpEntity<String> entity = new HttpEntity<>(json, headers);
-
-        new RestTemplate().postForEntity(
-                "http://localhost:8000/product-db",
-                entity,
-                String.class);
+        LOGGER.info("New product saved. ");
 
         return new ApiResponse(200, "Product created. ");
     }
 
     @Override
-    public List<ProductDTO> getProductsByCreditsIds(List<Integer> creditsIds) {
-
-        String ids = creditsIds.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
-
-        String url = "http://localhost:8000/product-db/" + ids;
-
-        ResponseEntity<ProductDTO[]> responseEntity = new RestTemplate().getForEntity(
-                url,
-                ProductDTO[].class
-        );
-
-        return Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
+    public List<Product> getProductsByCreditsIds(List<Integer> creditsIds) {
+        return productRepository.findAllByCreditIdIn(creditsIds);
     }
 }

@@ -1,6 +1,6 @@
 package com.product.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.product.domain.Product;
 import com.product.dto.ProductDTO;
 import com.product.web.response.ApiResponse;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProductService {
 
-    ApiResponse createProduct(ProductDTO productDTO) throws JsonProcessingException;
+    ApiResponse saveNewProduct(ProductDTO productDTO);
 
-    List<ProductDTO> getProductsByCreditsIds(List<Integer> creditsIds);
+    List<Product> getProductsByCreditsIds(List<Integer> creditsIds);
 }

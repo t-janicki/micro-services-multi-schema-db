@@ -1,14 +1,13 @@
 package com.customer.service;
 
+import com.customer.domain.Customer;
 import com.customer.dto.CustomerDTO;
-import com.customer.web.response.ApiResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;
 
 public interface CustomerService {
 
-    ApiResponse createCustomer(CustomerDTO customerDTO) throws JsonProcessingException;
+    Customer createCustomer(CustomerDTO customerDTO);
 
-    List<CustomerDTO> getCustomersByCreditsIds(List<Integer> creditsIds);
+    List<Customer> getCustomersByCreditsIds(List<Integer> creditsIds);
 }

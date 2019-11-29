@@ -3,6 +3,7 @@ package com.credit.facade;
 import com.credit.dto.CreditDTO;
 import com.credit.dto.CustomerDTO;
 import com.credit.dto.ProductDTO;
+import com.credit.mapper.CreditMapper;
 import com.credit.service.CreditService;
 import com.credit.web.request.CreditRequest;
 import com.credit.web.response.*;
@@ -21,11 +22,14 @@ import java.util.stream.Collectors;
 
 @Component
 public class CreditProductCustomerFacade {
+    private CreditMapper creditMapper;
     private CreditService creditService;
 
     @Autowired
-    public CreditProductCustomerFacade(CreditService creditService) {
+    public CreditProductCustomerFacade(CreditService creditService,
+                                       CreditMapper creditMapper) {
         this.creditService = creditService;
+        this.creditMapper = creditMapper;
     }
 
     public Integer createCredit(CreditRequest request) throws JsonProcessingException {
@@ -85,24 +89,26 @@ public class CreditProductCustomerFacade {
 
     public List<CreditsDetailedResponse> getDetailedCreditsForCustomerByCreditsIds(List<Integer> creditsIds) {
 
-        Map<Integer, CreditDTO> credits = creditService.getCredits()
+        List<CreditDTO> creditDTO = creditMapper.mapToCreditDTOList(creditService.getCredits());
+
+        Map<Integer, CreditDTO> credits = creditDTO
                 .stream()
                 .filter(c -> creditsIds.stream()
                         .anyMatch(id -> id.equals(c.getCreditId())))
                 .collect(Collectors.toMap(CreditDTO::getCreditId, c -> c));
 
-        Map<Integer, ProductDTO> products = creditService.getProductsByCreditsIds(creditsIds)
+        Map<Integer, ProductDTO> productsDTO = creditService.getProductsByCreditsIds(creditsIds)
                 .stream()
                 .collect(Collectors.toMap(ProductDTO::getCreditId, p -> p));
 
-        Map<Integer, CustomerDTO> customers = creditService.getCustomersByCreditsIds(creditsIds)
+        Map<Integer, CustomerDTO> customersDTO = creditService.getCustomersByCreditsIds(creditsIds)
                 .stream()
                 .collect(Collectors.toMap(CustomerDTO::getCreditId, c -> c));
 
         return credits.entrySet().stream()
                 .map(v -> {
-                    ProductDTO product = products.get(v.getKey());
-                    CustomerDTO customer = customers.get(v.getKey());
+                    ProductDTO product = productsDTO.get(v.getKey());
+                    CustomerDTO customer = customersDTO.get(v.getKey());
 
                     return new CreditsDetailedResponse(
                             new CustomerResponse(
