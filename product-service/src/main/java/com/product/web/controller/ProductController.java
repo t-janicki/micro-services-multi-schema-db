@@ -31,9 +31,9 @@ public class ProductController {
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse> createProduct(@Valid @RequestBody ProductDTO request) {
 
-        ApiResponse response = productService.saveNewProduct(request);
+        productService.saveNewProduct(request);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new ApiResponse(200, "Product created. "));
     }
 
     @GetMapping(value = "/{creditsIds}", produces = APPLICATION_JSON_VALUE)
