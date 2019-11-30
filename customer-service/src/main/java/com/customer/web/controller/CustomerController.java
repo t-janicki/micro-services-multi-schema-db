@@ -1,5 +1,6 @@
 package com.customer.web.controller;
 
+import com.customer.domain.Customer;
 import com.customer.dto.CustomerDTO;
 import com.customer.mapper.CustomerMapper;
 import com.customer.service.CustomerService;
@@ -37,8 +38,8 @@ public class CustomerController {
 
     @GetMapping(value = "/{creditsIds}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CustomerDTO>> getCustomersByCreditsIds(@PathVariable List<Integer> creditsIds) {
-        List<CustomerDTO> customerDTO = customerMapper.mapToCustomerDTOList(customerService.getCustomersByCreditsIds(creditsIds));
+        List<Customer> customers = customerService.getCustomersByCreditsIds(creditsIds);
 
-        return ResponseEntity.ok(customerDTO);
+        return ResponseEntity.ok(customerMapper.mapToCustomerDTOList(customers));
     }
 }

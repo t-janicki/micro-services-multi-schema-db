@@ -15,6 +15,11 @@ public class Credit {
     @Column(unique = true, nullable = false)
     private Integer creditId;
 
+    public Credit(String creditName, Integer creditId) {
+        this.creditName = creditName;
+        this.creditId = creditId;
+    }
+
     public Credit() {
 
     }

@@ -1,20 +1,14 @@
 package com.credit.service;
 
-import com.credit.domain.Credit;
-import com.credit.dto.CustomerDTO;
-import com.credit.dto.ProductDTO;
+import com.credit.web.request.CreditRequest;
+import com.credit.web.response.CreditsDetailedResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.List;
 
 public interface CreditService {
 
-    int generateCreditId();
+    Integer createCredit(CreditRequest request) throws JsonProcessingException;
 
-    Credit saveNewCredit(String creditName, int creditId);
-
-    List<Credit> getCredits();
-
-    List<CustomerDTO> getCustomersByCreditsIds(List<Integer> creditsIds);
-
-    List<ProductDTO> getProductsByCreditsIds(List<Integer> creditsIds);
+    List<CreditsDetailedResponse> getDetailedCreditsForCustomerByCreditsIds(List<Integer> creditsIds);
 }
