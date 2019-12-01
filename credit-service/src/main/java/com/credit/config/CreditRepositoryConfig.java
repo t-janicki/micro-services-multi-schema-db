@@ -14,6 +14,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.Objects;
 
 @Configuration
 @EnableJpaRepositories(
@@ -51,6 +52,6 @@ public class CreditRepositoryConfig {
     @Primary
     @Bean
     public PlatformTransactionManager creditTransactionManager(final @Qualifier("creditEntityManagerFactory") LocalContainerEntityManagerFactoryBean creditEntityManagerFactory) {
-        return new JpaTransactionManager(creditEntityManagerFactory.getObject());
+        return new JpaTransactionManager(Objects.requireNonNull(creditEntityManagerFactory.getObject()));
     }
 }

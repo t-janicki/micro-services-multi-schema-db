@@ -1,0 +1,18 @@
+server:
+  port: 8200
+app:
+  datasource:
+    customer:
+      url: jdbc:mysql://docker.for.mac.localhost:3306/customerdb?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+      username: inteca
+      password: password
+spring:
+  application:
+    name: customer-service
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: mysql
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
