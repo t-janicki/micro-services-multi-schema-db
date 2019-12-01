@@ -1,5 +1,8 @@
 server:
   port: 8300
+api:
+  customer: http://localhost:8200
+  product: http://localhost:8100
 app:
   datasource:
     credit:
