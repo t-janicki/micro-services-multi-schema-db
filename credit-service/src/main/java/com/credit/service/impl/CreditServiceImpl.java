@@ -30,6 +30,7 @@ public class CreditServiceImpl implements CreditService {
     private CreditRepository creditRepository;
     private CreditMapper creditMapper;
 
+    public CreditServiceImpl(){}
     @Autowired
     public CreditServiceImpl(CreditRepository creditRepository,
                              CreditMapper creditMapper) {
