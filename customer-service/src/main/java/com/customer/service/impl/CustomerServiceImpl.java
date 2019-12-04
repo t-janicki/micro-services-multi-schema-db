@@ -1,60 +1,45 @@
 package com.customer.service.impl;
 
+import com.customer.domain.Customer;
 import com.customer.dto.CustomerDTO;
+import com.customer.repository.CustomerRepository;
 import com.customer.service.CustomerService;
-import com.customer.web.response.ApiResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
 
-    @Override
-    public ApiResponse createCustomer(CustomerDTO customerDTO) throws JsonProcessingException {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomerServiceImpl.class);
+    private CustomerRepository customerRepository;
 
-        Map<String, String> customerInfo = new HashMap<>();
-        customerInfo.put("firstName", customerDTO.getFirstName());
-        customerInfo.put("surname", customerDTO.getSurname());
-        customerInfo.put("pesel", customerDTO.getPesel());
-        customerInfo.put("creditId", Integer.toString(customerDTO.getCreditId()));
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        String json = new ObjectMapper().writeValueAsString(customerInfo);
-        HttpEntity<String> entity = new HttpEntity<>(json, headers);
-
-        new RestTemplate().postForEntity(
-                "http://localhost:8000/customer-db",
-                entity,
-                String.class);
-
-        return new ApiResponse(200, "Customer created. ");
+    @Autowired
+    public CustomerServiceImpl(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
     }
 
     @Override
-    public List<CustomerDTO> getCustomersByCreditsIds(List<Integer> creditsIds) {
+    @Transactional
+    public Customer createCustomer(CustomerDTO customerDTO) {
+        Customer customer = new Customer();
+        customer.setFirstName(customerDTO.getFirstName());
+        customer.setSurname(customerDTO.getSurname());
+        customer.setPesel(customerDTO.getPesel());
+        customer.setCreditId(customerDTO.getCreditId());
 
-        String ids = creditsIds.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
+        customerRepository.save(customer);
 
-        String url = "http://localhost:8000/customer-db/" + ids;
+        LOGGER.info("New customer saved. ");
+        return customer;
+    }
 
-        ResponseEntity<CustomerDTO[]> responseEntity = new RestTemplate().getForEntity(
-                url,
-                CustomerDTO[].class
-        );
-
-        return Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
+    @Override
+    public List<Customer> getCustomersByCreditsIds(List<Integer> creditsIds) {
+        return customerRepository.findAllByCreditIdIn(creditsIds);
     }
 }

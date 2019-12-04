@@ -1,7 +1,8 @@
 package com.product.web.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.product.domain.Product;
 import com.product.dto.ProductDTO;
+import com.product.mapper.ProductMapper;
 import com.product.service.ProductService;
 import com.product.web.response.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,22 +19,28 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class ProductController {
 
     private ProductService productService;
+    private ProductMapper productMapper;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService,
+                             ProductMapper productMapper) {
         this.productService = productService;
+        this.productMapper = productMapper;
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<ApiResponse> createProduct(@Valid @RequestBody ProductDTO request) throws JsonProcessingException {
+    public ResponseEntity<ApiResponse> createProduct(@Valid @RequestBody ProductDTO request) {
 
-        ApiResponse response = productService.createProduct(request);
+        ApiResponse response = productService.saveNewProduct(request);
 
         return ResponseEntity.ok(response);
     }
 
     @GetMapping(value = "/{creditsIds}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ProductDTO>> getProductsByCreditsIds(@PathVariable List<Integer> creditsIds) {
-        return ResponseEntity.ok(productService.getProductsByCreditsIds(creditsIds));
+
+        List<Product> products = productService.getProductsByCreditsIds(creditsIds);
+
+        return ResponseEntity.ok(productMapper.mapToProductDTOLIst(products));
     }
 }

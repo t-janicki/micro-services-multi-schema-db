@@ -1,55 +1,50 @@
 package com.credit.service.impl;
 
-import com.credit.dto.CreditDTO;
+import com.credit.domain.Credit;
 import com.credit.dto.CustomerDTO;
 import com.credit.dto.ProductDTO;
+import com.credit.repository.CreditRepository;
 import com.credit.service.CreditService;
-import com.credit.web.response.ApiResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
+
 @Service
 public class CreditServiceImpl implements CreditService {
+    private CreditRepository creditRepository;
 
-    @Override
-    public ApiResponse saveNewCredit(String creditName, Integer creditId) throws JsonProcessingException {
-
-        Map<String, String> creditInfo = new HashMap<>();
-        creditInfo.put("creditName", creditName);
-        creditInfo.put("creditId", String.valueOf(creditId));
-
-        HttpHeaders headers=  new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        String json = new ObjectMapper().writeValueAsString(creditInfo);
-        HttpEntity<String> entity = new HttpEntity<>(json, headers);
-
-        new RestTemplate().postForEntity(
-                "http://localhost:8000/credit-db",
-                entity,
-                String.class
-        );
-
-        return new ApiResponse(200, "Product saved. ");
+    @Autowired
+    public CreditServiceImpl(CreditRepository creditRepository) {
+        this.creditRepository = creditRepository;
     }
 
     @Override
-    public List<CreditDTO> getCredits() {
-        ResponseEntity<CreditDTO[]> responseEntity = new RestTemplate().getForEntity(
-                "http://localhost:8000/credit-db",
-                CreditDTO[].class
-        );
+    public int generateCreditId() {
+        return Math.abs(new SecureRandom().nextInt());
+    }
 
-        return Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
+    @Override
+    public Credit saveNewCredit(String creditName, int creditId) {
+        Credit credit = new Credit();
+        credit.setCreditId(creditId);
+        credit.setCreditName(creditName);
+
+        creditRepository.save(credit);
+
+        LOGGER.info("New credit saved. ");
+        return credit;
+    }
+
+    @Override
+    public List<Credit> getCredits() {
+        return creditRepository.findAll();
     }
 
     @Override

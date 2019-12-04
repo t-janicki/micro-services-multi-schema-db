@@ -9,6 +9,11 @@ public class CreditDTO {
     @NotNull
     private Integer creditId;
 
+    public CreditDTO(String creditName,Integer creditId) {
+        this.creditName = creditName;
+        this.creditId = creditId;
+    }
+
     public CreditDTO() {
 
     }

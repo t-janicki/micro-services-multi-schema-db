@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/credit-service/credit-service.iml" filepath="$PROJECT_DIR$/credit-service/credit-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/customer-service/customer-service.iml" filepath="$PROJECT_DIR$/customer-service/customer-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/product-service/product-service.iml" filepath="$PROJECT_DIR$/product-service/product-service.iml" />
-      <module fileurl="file://$PROJECT_DIR$/repository-service/repository-service.iml" filepath="$PROJECT_DIR$/repository-service/repository-service.iml" />
     </modules>
   </component>
 </project>
