@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="customer-service" />
         <module name="credit-service" />
+        <module name="eureka-service" />
         <module name="application" />
         <module name="product-service" />
       </profile>
@@ -18,6 +19,7 @@
       <module name="credit-service" target="1.8" />
       <module name="customer-repository" target="1.8" />
       <module name="customer-service" target="1.8" />
+      <module name="eureka-service" target="1.8" />
       <module name="product-service" target="1.8" />
       <module name="repository-service" target="1.8" />
     </bytecodeTargetLevel>
@@ -27,6 +29,7 @@
       <module name="credit-service" options="-parameters" />
       <module name="customer-repository" options="-parameters" />
       <module name="customer-service" options="-parameters" />
+      <module name="eureka-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
       <module name="repository-service" options="-parameters" />
     </option>
