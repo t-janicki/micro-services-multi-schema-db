@@ -11,7 +11,10 @@ import com.credit.web.request.CreditRequest;
 import com.credit.web.response.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -23,14 +26,19 @@ import java.security.SecureRandom;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
-
 @Service
 public class CreditServiceImpl implements CreditService {
     private CreditRepository creditRepository;
     private CreditMapper creditMapper;
 
-    public CreditServiceImpl(){}
+    @Value("${api.customer}")
+    private String customerHost;
+
+    @Value("${api.product}")
+    private String productHost;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CreditServiceImpl.class);
+
     @Autowired
     public CreditServiceImpl(CreditRepository creditRepository,
                              CreditMapper creditMapper) {
@@ -103,7 +111,7 @@ public class CreditServiceImpl implements CreditService {
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));
 
-        String url = "http://localhost:8200/customers/" + ids;
+        String url = customerHost + "/customers/" + ids;
 
         ResponseEntity<CustomerDTO[]> responseEntity = new RestTemplate().getForEntity(
                 url,
@@ -118,7 +126,7 @@ public class CreditServiceImpl implements CreditService {
                 .map(String::valueOf)
                 .collect(Collectors.joining(","));
 
-        String url = "http://localhost:8100/products/" + ids;
+        String url = productHost + "/products/" + ids;
 
         ResponseEntity<ProductDTO[]> responseEntity = new RestTemplate().getForEntity(
                 url,
@@ -152,7 +160,7 @@ public class CreditServiceImpl implements CreditService {
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
 
         ResponseEntity<ApiResponse> responseEntity = new RestTemplate().postForEntity(
-                "http://localhost:8100/products",
+                productHost + "/products",
                 entity,
                 ApiResponse.class);
 
@@ -174,7 +182,7 @@ public class CreditServiceImpl implements CreditService {
         HttpEntity<String> entity = new HttpEntity<>(json, headers);
 
         ResponseEntity<ApiResponse> responseEntity = new RestTemplate().postForEntity(
-                "http://localhost:8200/customers",
+                customerHost + "/customers",
                 entity,
                 ApiResponse.class);
 
