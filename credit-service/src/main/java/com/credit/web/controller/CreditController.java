@@ -1,6 +1,6 @@
 package com.credit.web.controller;
 
-import com.credit.facade.CreditProductCustomerFacade;
+import com.credit.service.CreditService;
 import com.credit.web.request.CreditRequest;
 import com.credit.web.response.CreditIdResponse;
 import com.credit.web.response.CreditsDetailedResponse;
@@ -18,17 +18,17 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequestMapping(value = "/credits")
 public class CreditController {
 
-    private CreditProductCustomerFacade facade;
+    private CreditService creditService;
 
     @Autowired
-    public CreditController(CreditProductCustomerFacade facade) {
-        this.facade = facade;
+    public CreditController(CreditService creditService) {
+        this.creditService = creditService;
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<CreditIdResponse> createCredit(@Valid @RequestBody CreditRequest request) throws JsonProcessingException {
 
-        int creditId = facade.createCredit(request);
+        int creditId = creditService.createCredit(request);
 
         return ResponseEntity.ok(new CreditIdResponse(creditId));
     }
@@ -36,7 +36,7 @@ public class CreditController {
     @GetMapping(value = "/creditsIds={creditsIds}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CreditsDetailedResponse>> getCredits(@PathVariable List<Integer> creditsIds) {
 
-        return ResponseEntity.ok(facade.getDetailedCreditsForCustomerByCreditsIds(creditsIds));
+        return ResponseEntity.ok(creditService.getDetailedCreditsForCustomerByCreditsIds(creditsIds));
     }
 
 }

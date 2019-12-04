@@ -4,7 +4,6 @@ import com.product.domain.Product;
 import com.product.dto.ProductDTO;
 import com.product.repository.ProductRepository;
 import com.product.service.ProductService;
-import com.product.web.response.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +24,11 @@ public class ProductServiceImpl implements ProductService {
         this.productRepository = productRepository;
     }
 
+    public ProductServiceImpl() {
+    }
+
     @Override
-    public ApiResponse saveNewProduct(ProductDTO productDTO) {
+    public Product saveNewProduct(ProductDTO productDTO) {
 
         Product product = new Product();
         product.setProductName(productDTO.getProductName());
@@ -37,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
 
         LOGGER.info("New product saved. ");
 
-        return new ApiResponse(200, "Product created. ");
+        return product;
     }
 
     @Override

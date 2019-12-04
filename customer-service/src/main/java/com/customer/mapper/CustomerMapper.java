@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 @Component
 public class CustomerMapper {
 
-    private CustomerDTO mapToCustomerDTO(Customer customer) {
+    public CustomerDTO mapToCustomerDTO(Customer customer) {
         return new CustomerDTO(
                 customer.getFirstName(),
                 customer.getSurname(),

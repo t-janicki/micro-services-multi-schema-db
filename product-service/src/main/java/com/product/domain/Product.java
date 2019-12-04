@@ -21,6 +21,12 @@ public class Product {
     public Product() {
     }
 
+    public Product(String productName, Integer value, Integer creditId) {
+        this.productName = productName;
+        this.value = value;
+        this.creditId = creditId;
+    }
+
     public Long getId() {
         return id;
     }
