@@ -7,6 +7,7 @@ import com.credit.dto.ProductDTO;
 import com.credit.mapper.CreditMapper;
 import com.credit.repository.CreditRepository;
 import com.credit.service.CreditService;
+import com.credit.service.CustomerServiceProxy;
 import com.credit.web.request.CreditRequest;
 import com.credit.web.response.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 public class CreditServiceImpl implements CreditService {
     private CreditRepository creditRepository;
     private CreditMapper creditMapper;
+    private CustomerServiceProxy customerServiceProxy;
 
     @Value("${api.customer}")
     private String customerHost;
@@ -41,9 +43,11 @@ public class CreditServiceImpl implements CreditService {
 
     @Autowired
     public CreditServiceImpl(CreditRepository creditRepository,
-                             CreditMapper creditMapper) {
+                             CreditMapper creditMapper,
+                             CustomerServiceProxy customerServiceProxy) {
         this.creditRepository = creditRepository;
         this.creditMapper = creditMapper;
+        this.customerServiceProxy = customerServiceProxy;
     }
 
     public Integer createCredit(CreditRequest request) throws JsonProcessingException {
@@ -73,9 +77,7 @@ public class CreditServiceImpl implements CreditService {
                 .stream()
                 .collect(Collectors.toMap(ProductDTO::getCreditId, p -> p));
 
-        Map<Integer, CustomerDTO> customersDTO = getCustomersByCreditsIds(creditsIds)
-                .stream()
-                .collect(Collectors.toMap(CustomerDTO::getCreditId, c -> c));
+        Map<Integer, CustomerDTO> customersDTO = getCustomersByCreditsIdsAsMap(creditsIds);
 
         return credits.entrySet().stream()
                 .map(v -> {
@@ -106,19 +108,11 @@ public class CreditServiceImpl implements CreditService {
         return Math.abs(new SecureRandom().nextInt());
     }
 
-    private List<CustomerDTO> getCustomersByCreditsIds(List<Integer> creditsIds) {
-        String ids = creditsIds.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
+    private Map<Integer, CustomerDTO> getCustomersByCreditsIdsAsMap(List<Integer> creditsIds) {
+        List<CustomerDTO> customersDTO = customerServiceProxy.getCustomersByCreditsIds(creditsIds.toArray(new Integer[0]));
 
-        String url = customerHost + "/customers/" + ids;
-
-        ResponseEntity<CustomerDTO[]> responseEntity = new RestTemplate().getForEntity(
-                url,
-                CustomerDTO[].class
-        );
-
-        return Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
+        return customersDTO.stream()
+                .collect(Collectors.toMap(CustomerDTO::getCreditId, c -> c));
     }
 
     private List<ProductDTO> getProductsByCreditsIds(List<Integer> creditsIds) {
@@ -168,25 +162,15 @@ public class CreditServiceImpl implements CreditService {
     }
 
 
-    private ApiResponse createCustomer(CreditRequest request, int creditId) throws JsonProcessingException {
-        Map<String, String> customerInfo = new HashMap<>();
-        customerInfo.put("firstName", request.getFirstName());
-        customerInfo.put("surname", request.getSurname());
-        customerInfo.put("pesel", request.getPesel());
-        customerInfo.put("creditId", String.valueOf(creditId));
+    private ApiResponse createCustomer(CreditRequest request, int creditId) {
+        CustomerDTO customerDTO = new CustomerDTO(
+                request.getFirstName(),
+                request.getSurname(),
+                request.getPesel(),
+                creditId
+        );
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        String json = new ObjectMapper().writeValueAsString(customerInfo);
-        HttpEntity<String> entity = new HttpEntity<>(json, headers);
-
-        ResponseEntity<ApiResponse> responseEntity = new RestTemplate().postForEntity(
-                customerHost + "/customers",
-                entity,
-                ApiResponse.class);
-
-        return responseEntity.getBody();
+        return customerServiceProxy.registerCustomer(customerDTO);
     }
 
 }

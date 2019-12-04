@@ -13,6 +13,14 @@ public class CustomerDTO {
     @NotNull
     private Integer creditId;
 
+    public CustomerDTO(String firstName, String surname,
+                       String pesel, Integer creditId) {
+        this.firstName = firstName;
+        this.surname = surname;
+        this.pesel = pesel;
+        this.creditId = creditId;
+    }
+
     public CustomerDTO() {
 
     }
