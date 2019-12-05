@@ -14,6 +14,12 @@ public class ProductDTO {
     public ProductDTO() {
     }
 
+    public ProductDTO(String productName, Integer value, Integer creditId) {
+        this.productName = productName;
+        this.value = value;
+        this.creditId = creditId;
+    }
+
     public String getProductName() {
         return productName;
     }

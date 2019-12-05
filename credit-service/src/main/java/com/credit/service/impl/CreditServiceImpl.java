@@ -8,20 +8,15 @@ import com.credit.mapper.CreditMapper;
 import com.credit.repository.CreditRepository;
 import com.credit.service.CreditService;
 import com.credit.service.CustomerServiceProxy;
+import com.credit.service.ProductServiceProxy;
 import com.credit.web.request.CreditRequest;
 import com.credit.web.response.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.security.SecureRandom;
 import java.util.*;
@@ -32,25 +27,22 @@ public class CreditServiceImpl implements CreditService {
     private CreditRepository creditRepository;
     private CreditMapper creditMapper;
     private CustomerServiceProxy customerServiceProxy;
-
-    @Value("${api.customer}")
-    private String customerHost;
-
-    @Value("${api.product}")
-    private String productHost;
+    private ProductServiceProxy productServiceProxy;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CreditServiceImpl.class);
 
     @Autowired
     public CreditServiceImpl(CreditRepository creditRepository,
                              CreditMapper creditMapper,
-                             CustomerServiceProxy customerServiceProxy) {
+                             CustomerServiceProxy customerServiceProxy,
+                             ProductServiceProxy productServiceProxy) {
         this.creditRepository = creditRepository;
         this.creditMapper = creditMapper;
         this.customerServiceProxy = customerServiceProxy;
+        this.productServiceProxy = productServiceProxy;
     }
 
-    public Integer createCredit(CreditRequest request) throws JsonProcessingException {
+    public Integer createCredit(CreditRequest request) {
 
         int creditId = generateCreditId();
 
@@ -73,9 +65,7 @@ public class CreditServiceImpl implements CreditService {
                         .anyMatch(id -> id.equals(c.getCreditId())))
                 .collect(Collectors.toMap(CreditDTO::getCreditId, c -> c));
 
-        Map<Integer, ProductDTO> productsDTO = getProductsByCreditsIds(creditsIds)
-                .stream()
-                .collect(Collectors.toMap(ProductDTO::getCreditId, p -> p));
+        Map<Integer, ProductDTO> productsDTO = getProductsByCreditsIds(creditsIds);
 
         Map<Integer, CustomerDTO> customersDTO = getCustomersByCreditsIdsAsMap(creditsIds);
 
@@ -115,19 +105,11 @@ public class CreditServiceImpl implements CreditService {
                 .collect(Collectors.toMap(CustomerDTO::getCreditId, c -> c));
     }
 
-    private List<ProductDTO> getProductsByCreditsIds(List<Integer> creditsIds) {
-        String ids = creditsIds.stream()
-                .map(String::valueOf)
-                .collect(Collectors.joining(","));
+    private Map<Integer, ProductDTO> getProductsByCreditsIds(List<Integer> creditsIds) {
+        List<ProductDTO> productsDTO = productServiceProxy.getProductsByCreditsIds(creditsIds.toArray(new Integer[0]));
 
-        String url = productHost + "/products/" + ids;
-
-        ResponseEntity<ProductDTO[]> responseEntity = new RestTemplate().getForEntity(
-                url,
-                ProductDTO[].class
-        );
-
-        return Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
+        return productsDTO.stream()
+                .collect(Collectors.toMap(ProductDTO::getCreditId, p -> p));
     }
 
     private Credit saveNewCredit(String creditName, int creditId) {
@@ -141,24 +123,14 @@ public class CreditServiceImpl implements CreditService {
         return credit;
     }
 
-    private ApiResponse createProduct(CreditRequest request, int creditId) throws JsonProcessingException {
-        Map<String, String> productInfo = new HashMap<>();
-        productInfo.put("productName", request.getProductName());
-        productInfo.put("value", String.valueOf(request.getProductValue()));
-        productInfo.put("creditId", String.valueOf(creditId));
+    private ApiResponse createProduct(CreditRequest request, int creditId) {
+        ProductDTO productDTO = new ProductDTO(
+                request.getProductName(),
+                request.getProductValue(),
+                creditId
+        );
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        String json = new ObjectMapper().writeValueAsString(productInfo);
-        HttpEntity<String> entity = new HttpEntity<>(json, headers);
-
-        ResponseEntity<ApiResponse> responseEntity = new RestTemplate().postForEntity(
-                productHost + "/products",
-                entity,
-                ApiResponse.class);
-
-        return responseEntity.getBody();
+        return productServiceProxy.registerProduct(productDTO);
     }
 
 
