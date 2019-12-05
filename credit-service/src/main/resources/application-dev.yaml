@@ -13,6 +13,12 @@ app:
       url: jdbc:mysql://localhost:3306/creditdb?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
       username: inteca
       password: password
+customer-service:
+  ribbon:
+    listOfServers: http://localhost:8200,http://localhost:8201
+product-service:
+  ribbon:
+    listOfServers: http://localhost:8100,http://localhost:8101
 spring:
   application:
     name: credit-service

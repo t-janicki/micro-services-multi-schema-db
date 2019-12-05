@@ -11,11 +11,9 @@ import com.credit.service.CustomerServiceProxy;
 import com.credit.service.ProductServiceProxy;
 import com.credit.web.request.CreditRequest;
 import com.credit.web.response.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
