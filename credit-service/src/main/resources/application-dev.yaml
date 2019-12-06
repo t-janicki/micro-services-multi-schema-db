@@ -20,6 +20,8 @@ app:
 #  ribbon:
 #    listOfServers: http://localhost:8100,http://localhost:8101
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: credit-service
   jpa:

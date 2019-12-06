@@ -12,13 +12,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 
 //@FeignClient(name = "product-service", url = "localhost:8100")
-@FeignClient(name = "product-service")
+//@FeignClient(name = "product-service")
+@FeignClient(name = "netflix-zuul-service")
 @RibbonClient(name = "product-service")
 public interface ProductServiceProxy {
 
-    @PostMapping(value = "/products")
+    //    @PostMapping(value = "/products")
+    @PostMapping(value = "/product-service/products")
     ApiResponse registerProduct(@RequestBody ProductDTO productDTO);
 
-    @GetMapping(value = "/products/{creditsIds}")
+    //    @GetMapping(value = "/products/{creditsIds}")
+    @GetMapping(value = "/product-service/products/{creditsIds}")
     List<ProductDTO> getProductsByCreditsIds(@PathVariable("creditsIds") Integer[] creditsIds);
 }
