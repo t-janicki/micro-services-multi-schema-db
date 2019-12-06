@@ -6,11 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="customer-service" />
         <module name="credit-service" />
+        <module name="customer-service" />
+        <module name="eureka-service" />
+        <module name="zipkin-service" />
         <module name="product-service" />
         <module name="netflix-zuul-service" />
-        <module name="eureka-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -21,6 +22,7 @@
       <module name="netflix-zuul-service" target="1.8" />
       <module name="product-service" target="1.8" />
       <module name="repository-service" target="1.8" />
+      <module name="zipkin-service" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -32,6 +34,7 @@
       <module name="netflix-zuul-service" options="-parameters" />
       <module name="product-service" options="-parameters" />
       <module name="repository-service" options="-parameters" />
+      <module name="zipkin-service" options="-parameters" />
     </option>
   </component>
 </project>
