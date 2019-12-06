@@ -12,13 +12,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 
 //@FeignClient(name = "customer-service", url = "localhost:8200")
-@FeignClient(name = "customer-service")
+//@FeignClient(name = "customer-service")
+@FeignClient(name = "netflix-zuul-service")
 @RibbonClient(name = "customer-service")
 public interface CustomerServiceProxy {
 
-    @PostMapping(value = "/customers")
+    @PostMapping(value = "/customer-service/customers")
     ApiResponse registerCustomer(@RequestBody CustomerDTO request);
 
-    @GetMapping(value = "/customers/{creditsIds}")
+    @GetMapping(value = "/customer-service/customers/{creditsIds}")
     List<CustomerDTO> getCustomersByCreditsIds(@PathVariable("creditsIds") Integer[] creditsIds);
 }
