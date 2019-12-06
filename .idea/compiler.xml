@@ -8,9 +8,9 @@
         <outputRelativeToContentRoot value="true" />
         <module name="customer-service" />
         <module name="credit-service" />
-        <module name="eureka-service" />
         <module name="product-service" />
         <module name="netflix-zuul-service" />
+        <module name="eureka-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
